@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Emoji Zoo Clicker</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h2 {
+      margin-top: 30px;
+    }
+    .section {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    button {
+      margin-top: 5px;
+      padding: 6px 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🦁 Emoji Zoo Clicker</h1>
+
+  <div class="section">
+    <h2>🏠 Zoo Overview</h2>
+    <p>👥 Visitors: <span id="visitors">0</span></p>
+    <p>💰 Cash: $<span id="cash">100</span></p>
+    <p>⭐ Zoo Rating: <span id="rating">3.0</span> / 5</p>
+    <p>⏳ Income Per Second: $<span id="income">0</span></p>
+  </div>
+
+  <div class="section">
+    <h2>🐾 Animals</h2>
+    <div id="animal-list"></div>
+  </div>
+
+  <div class="section">
+    <h2>🛒 Shop</h2>
+    <div id="shop">
+      <button onclick="buyAnimal('Elephant')">🐘 Elephant – $50</button><br>
+      <button onclick="buyAnimal('Giraffe')">🦒 Giraffe – $40</button><br>
+      <button onclick="buyAnimal('Lion')">🦁 Lion – $60</button>
+    </div>
+  </div>
+
+  <script>
+    let zoo = {
+      cash: 100,
+      visitors: 0,
+      rating: 3.0,
+      animals: {
+        Elephant: { count: 0, emoji: '🐘', income: 2 },
+        Giraffe: { count: 0, emoji: '🦒', income: 1.5 },
+        Lion: { count: 0, emoji: '🦁', income: 3 }
+      }
+    };
+
+    function getIncomePerSecond() {
+      let total = 0;
+      for (let a in zoo.animals) {
+        total += zoo.animals[a].count * zoo.animals[a].income;
+      }
+      return total.toFixed(2);
+    }
+
+    function updateUI() {
+      document.getElementById('cash').textContent = zoo.cash.toFixed(2);
+      document.getElementById('visitors').textContent = Math.floor(zoo.visitors);
+      document.getElementById('rating').textContent = zoo.rating.toFixed(1);
+      document.getElementById('income').textContent = getIncomePerSecond();
+
+      const animalList = document.getElementById('animal-list');
+      animalList.innerHTML = '';
+      for (let a in zoo.animals) {
+        const animal = zoo.animals[a];
+        animalList.innerHTML += `${animal.emoji} ${a}s: ${animal.count}<br>`;
+      }
+    }
+
+    function buyAnimal(type) {
+      const cost = { Elephant: 50, Giraffe: 40, Lion: 60 }[type];
+      if (zoo.cash >= cost) {
+        zoo.cash -= cost;
+        zoo.animals[type].count += 1;
+        zoo.visitors += 5;
+        zoo.rating += 0.1;
+        updateUI();
+      } else {
+        alert("Not enough cash!");
+      }
+    }
+
+    function generateIncome() {
+      zoo.cash += parseFloat(getIncomePerSecond());
+      zoo.visitors += 0.5;
+      updateUI();
+    }
+
+    setInterval(generateIncome, 1000);
+    updateUI();
+  </script>
+
+</body>
+</html>
